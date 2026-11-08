@@ -15,4 +15,5 @@ public class OrderRequest {
     private Integer quantity;
     private Double unitPrice;
     private String customerName;
+    private String customerEmail;
 }

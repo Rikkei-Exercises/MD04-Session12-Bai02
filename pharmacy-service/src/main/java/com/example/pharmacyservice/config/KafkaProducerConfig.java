@@ -1,5 +1,6 @@
 package com.example.pharmacyservice.config;
 
+import com.example.pharmacyservice.event.OrderCreatedEvent;
 import com.example.pharmacyservice.event.OrderEvent;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -24,6 +25,7 @@ import java.util.Map;
 public class KafkaProducerConfig {
 
     public static final String MEDICINE_STOCK_TOPIC = "medicine-stock-events";
+    public static final String ORDER_EVENTS_TOPIC = "order-events";
 
     @Value("${spring.kafka.bootstrap-servers:localhost:9092}")
     private String bootstrapServers;
@@ -51,5 +53,30 @@ public class KafkaProducerConfig {
                 .partitions(3)
                 .replicas(1)
                 .build();
+    }
+
+    @Bean
+    public NewTopic orderEventsTopic() {
+        // Topic 'order-events' phát sự kiện OrderCreatedEvent cho email-service và inventory-service
+        return TopicBuilder.name(ORDER_EVENTS_TOPIC)
+                .partitions(3)
+                .replicas(1)
+                .build();
+    }
+
+    @Bean
+    @SuppressWarnings("removal")
+    public ProducerFactory<String, OrderCreatedEvent> orderCreatedProducerFactory() {
+        Map<String, Object> configProps = new HashMap<>();
+        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+        configProps.put(JsonSerializer.ADD_TYPE_INFO_HEADERS, false);
+        return new DefaultKafkaProducerFactory<>(configProps);
+    }
+
+    @Bean
+    public KafkaTemplate<String, OrderCreatedEvent> orderCreatedKafkaTemplate() {
+        return new KafkaTemplate<>(orderCreatedProducerFactory());
     }
 }

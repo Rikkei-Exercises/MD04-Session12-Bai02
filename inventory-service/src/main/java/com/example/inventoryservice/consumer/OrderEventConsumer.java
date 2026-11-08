@@ -42,7 +42,7 @@ public class OrderEventConsumer {
      */
     @Transactional
     @KafkaListener(
-            topics = "${kafka.topic.medicine-stock-events:medicine-stock-events}",
+            topics = { "${kafka.topic.order-events:order-events}", "${kafka.topic.medicine-stock-events:medicine-stock-events}" },
             groupId = "${spring.kafka.consumer.group-id:inventory-group}",
             containerFactory = "kafkaListenerContainerFactory"
     )

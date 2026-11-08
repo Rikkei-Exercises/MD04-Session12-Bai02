@@ -34,7 +34,7 @@ public class OrderNotificationConsumer {
      * 2. In ra log thông báo đúng yêu cầu: "Hóa đơn cho đơn hàng [orderId] đã được gửi tới khách hàng"
      */
     @KafkaListener(
-            topics = "${kafka.topic.medicine-stock-events:medicine-stock-events}",
+            topics = { "${kafka.topic.order-events:order-events}", "${kafka.topic.medicine-stock-events:medicine-stock-events}" },
             groupId = "${spring.kafka.consumer.group-id:notification-group}",
             containerFactory = "kafkaListenerContainerFactory"
     )

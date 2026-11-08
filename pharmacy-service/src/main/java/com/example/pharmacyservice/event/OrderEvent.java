@@ -22,4 +22,5 @@ public class OrderEvent implements Serializable {
     private Long medicineId;
     private Integer quantity;
     private Long timestamp;
+    private String customerEmail;
 }
